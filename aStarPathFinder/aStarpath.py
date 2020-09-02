@@ -1,23 +1,35 @@
 #!/usr/bin/python3
-import math
 from queue import PriorityQueue
-import pygame
+try:
+    import pygame
+    import sys
+    import math
+    from tkinter import *
+    import os
+except:
+    import pygame
+    import sys
+    import math
+    from tkinter import *
+    import os
 
 WIDTH = 800
 #setting up the display
 WIN = pygame.display.set_mode((WIDTH,WIDTH))
 pygame.display.set_caption("A* Path Finding Algorithm")
 
-RED = (255,0,0)
-GREEN = (0,255,0)
+RED = (231,76,60)
+GREEN = (34,153,84)
 BLUE = (0,255,0)
 YELLOW = (255,255,0)
 WHITE = (255,255,255)
-BLACK = (0,0,0)
-PURPLE = (128,0,128)
-ORANGE = (255,165,0)
+S_BLACK = (27,38,49)
+DARK_YELLOW = (214,255,30)
+VIOLET = (194,41,255)
 GREY = (128,128,128)
 TURQUOISE = (64,224,208)
+ICY_GREEN = (59,237,135)
+KICHU_BLUE = (93,173,226)
 #viz tools
 class Node():
     def __init__(self,row,col,width,total_rows):
@@ -25,7 +37,7 @@ class Node():
         self.col = col
         self.x = row * width  #x,y for pos of vertex
         self.y = col * width # WIDTH/no. of cubes = width of each cubes
-        self.color = WHITE # all white cube
+        self.color = S_BLACK # all white cube
         self.neighbours = []
         self.width = width
         self.total_rows = total_rows 
@@ -34,40 +46,40 @@ class Node():
         return self.row,self.col #format = (col,row)
 
     def is_cloed(self):
-        return self.color == RED #if color is red it means the node is visited and of no use
+        return self.color == ICY_GREEN #if color is red it means the node is visited and of no use
     
     def is_open(self):
-        return self.color == GREEN #can go there
+        return self.color == KICHU_BLUE #can go there
     
     def is_barrier(self):
-        return self.color == BLACK #barrier can't go there 
+        return self.color == WHITE #barrier can't go there 
     
     def is_start(self):
-        return self.color == ORANGE #starting node
+        return self.color == VIOLET #starting node
 
     def is_end(self):
-        return self.color == TURQUOISE
+        return self.color == RED
     
     def reset(self):
-        self.color = WHITE
+        self.color = S_BLACK
 
     def make_start(self):
-        self.color = ORANGE
+        self.color = VIOLET
 
     def make_closed(self):
-        self.color = RED
+        self.color = ICY_GREEN
 
     def make_open(self):
-        self.color = GREEN
+        self.color = KICHU_BLUE
 
     def make_barrier(self):
-        self.color = BLACK
+        self.color = WHITE
 
     def make_end(self):
-        self.color = TURQUOISE
+        self.color = RED
 
     def make_path(self):
-        self.color = PURPLE
+        self.color = DARK_YELLOW
 
     def draw(self,win):
         pygame.draw.rect(win,self.color,(self.x,self.y,self.width,self.width))
@@ -152,7 +164,7 @@ def algo(draw,grid,start,end):
 
         if(current != start): # if the node is not the start node
             current.make_closed()
-
+    
     return False
 
 def make_grid(rows,width):
@@ -180,7 +192,7 @@ def draw_grid(win,rows,width):
 #drawing the whole thing
 
 def draw(win,grid,rows,width):
-    win.fill(WHITE) #drwaing the initial board
+    win.fill(S_BLACK) #drwaing the initial board
 
     for row in grid:
         for node in row:
@@ -198,6 +210,27 @@ def get_clicked_pos(pos,rows,width):
     col = x //gap
     return row,col
 
+#pop-up window
+def alert_popup(title, message, path):
+    """Generate a pop-up window for special messages."""
+    root = Tk()
+    root.title(title)
+    w = 400     # popup window width
+    h = 200     # popup window height
+    sw = root.winfo_screenwidth()
+    sh = root.winfo_screenheight()
+    x = (sw - w)/2
+    y = (sh - h)/2
+    root.geometry("%dx%d+%d+%d" % (w, h, x, y))
+    m = message
+    m += "\n"
+    m += path
+    w = Label(root, text=m, width=120, height=10)
+    w.pack()
+    b = Button(root, text="OK", command=root.destroy, width=10)
+    b.pack()
+    mainloop()
+
 #win is the window
 def main(win,width):
     ROWS = 50
@@ -205,8 +238,9 @@ def main(win,width):
 
     start = None
     end = None
-
+    
     run = True
+    alert_popup("A* manual", "Hello ", "Place 2 points on the canvas \n 'Space' to start the program \n 'c' to reset")
     while(run):
         draw(win,grid,ROWS,width)
         #looping through all events like mouse click etc.
