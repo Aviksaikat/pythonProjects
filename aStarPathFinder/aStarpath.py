@@ -91,11 +91,21 @@ class Node():
     def __lt__(self, other): #less than comapring 2 nodes(2 points)
         return False
 
-    
+# heuristic fn. = educated guess
 def h(p1,p2): #cal dist. using manhaten dist. cal. L dist. b/w 2 points
     x1,y1 = p1
     x2,y2 = p2 
     return abs(x1-x2) + abs(y1-y2)
+
+#trac-back the path 
+def reconstruct_path(prev_node, current, draw):
+    while(current in prev_node):
+        current = prev_node[current]
+        current.make_path()
+        draw()
+        
+
+
 #A* algo F(n) = G(n) + H(n)
 def algo(draw,grid,start,end):
     count = 0
@@ -114,7 +124,7 @@ def algo(draw,grid,start,end):
     while not open_set.empty():
         for event in pygame.event.get():
             if(event.type == pygame.QUIT):
-                pygame.quit()#exit the algo
+                pygame.quit()#exit the algo/game
             
         current = open_set.get()[2]#open_set.put((0,count, start))
         # we need start so the index is 2
@@ -122,12 +132,14 @@ def algo(draw,grid,start,end):
         open_set_hash.remove(current)#removing form the set open_set_hash
         #this node is the end node we found the shortest path
         if(current == end):
-            pass #make path
+            reconstruct_path(prev_node, end, draw) #draw passed in algo the lambda one
+            end.make_end() # stop printing the path color on the end node
+            return True
         
         for neighbour in current.neighbours:
             temp_g_score = g_score[current] + 1 #assuming all node is of same dist. and going to the next node
 
-            if(temp_g_score < g_score[neighbour]):
+            if(temp_g_score < g_score[neighbour]): #new g_score is less update the score bcz we haev found a better path
                 prev_node[neighbour] = current
                 g_score[neighbour] = temp_g_score
                 f_score[neighbour] = temp_g_score + h(neighbour.get_pos(),end.get_pos())
@@ -188,14 +200,13 @@ def get_clicked_pos(pos,rows,width):
 
 #win is the window
 def main(win,width):
-    ROWS = 100
+    ROWS = 50
     grid = make_grid(ROWS,width)
 
     start = None
     end = None
 
     run = True
-    started = False
     while(run):
         draw(win,grid,ROWS,width)
         #looping through all events like mouse click etc.
@@ -203,8 +214,6 @@ def main(win,width):
             if(event.type == pygame.QUIT):
                 run = False
             #to stop the user form doing anything after the algo. is started
-            if started:
-                continue
             # right or left click
             if pygame.mouse.get_pressed()[0]:#left
                 pos = pygame.mouse.get_pos()
@@ -232,13 +241,18 @@ def main(win,width):
                     end = None
 
             if(event.type == pygame.KEYDOWN):
-                if(event.key == pygame.K_SPACE and not started):
+                if(event.key == pygame.K_SPACE and start and end): #make sure that the start and end node is present before starting the algo
                     for row in grid:
                         for node in row:
                             node.update_neighbours(grid)
+                    
                     #lambda is passing a fn. which is fucntion call
-                    algo(lambda: draw(win, grid, row, width),grid,start, end)
-
+                    algo(lambda: draw(win, grid, ROWS, width),grid, start, end)
+                
+                if(event.key == pygame.K_c):
+                    start = None 
+                    end  = None
+                    grid = make_grid(ROWS, width)
     pygame.quit()
     
 
