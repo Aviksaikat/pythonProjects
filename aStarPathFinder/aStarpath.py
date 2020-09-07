@@ -46,7 +46,8 @@ class Node():
         return self.row,self.col #format = (col,row)
 
     def is_cloed(self):
-        return self.color == ICY_GREEN #if color is red it means the node is visited and of no use
+        return self.color == ICY_GREEN 
+        #if color is red it means the node is visited and of no use
     
     def is_open(self):
         return self.color == KICHU_BLUE #can go there
@@ -131,7 +132,7 @@ def algo(draw,grid,start,end):
     f_score = {node: float("inf") for row in grid for node in row}# predicted dist. form current to end node
     f_score[start] = h(start.get_pos(),end.get_pos()) #estimating dist the  H(n)
 
-    open_set_hash = {start} #set #check if the node is int the queue
+    open_set_hash = {start} #set #check if the node is in the queue
 
     while not open_set.empty():
         for event in pygame.event.get():
@@ -211,7 +212,7 @@ def get_clicked_pos(pos,rows,width):
     return row,col
 
 #pop-up window
-def alert_popup(title, message, path):
+def alert_popup(title, message):
     """Generate a pop-up window for special messages."""
     root = Tk()
     root.title(title)
@@ -224,12 +225,39 @@ def alert_popup(title, message, path):
     root.geometry("%dx%d+%d+%d" % (w, h, x, y))
     m = message
     m += "\n"
-    m += path
     w = Label(root, text=m, width=120, height=10)
     w.pack()
     b = Button(root, text="OK", command=root.destroy, width=10)
+    #b = Button(root, text="OK", command=cont(), width=10)
     b.pack()
     mainloop()
+def done(event):
+    exit(1)
+
+def alert(title, message):
+    """Generate a pop-up window for special messages."""
+    root = Tk()
+    root.title(title)
+    w = 400     # popup window width
+    h = 250     # popup window height
+    sw = root.winfo_screenwidth()
+    sh = root.winfo_screenheight()
+    x = (sw - w)/2
+    y = (sh - h)/2
+    root.geometry("%dx%d+%d+%d" % (w, h, x, y))
+    m = message
+    m += "\n"
+    w = Label(root, text=m, width=120, height=10)
+    w.pack()
+    #b = Button(root, text="OK", command=root.destroy, width=10)
+    b = Button(root, text="Yes", command=root.destroy, width=10, pady = 5)
+    b2 = Button(root, text="No", width=10, pady = 5)
+    b2.bind('<ButtonRelease-1>', done)
+    b.pack()
+    b2.pack()#the button is placed on the popup
+    mainloop()
+
+
 
 #win is the window
 def main(win,width):
@@ -240,7 +268,7 @@ def main(win,width):
     end = None
     
     run = True
-    alert_popup("A* manual", "Hello ", "Place 2 points on the canvas \n 'Space' to start the program \n 'c' to reset")
+    alert_popup("A* manual", "Place 2 points on the canvas \n 'Space' to start the program \n 'c' to reset")
     while(run):
         draw(win,grid,ROWS,width)
         #looping through all events like mouse click etc.
@@ -273,20 +301,23 @@ def main(win,width):
                     start = None
                 elif(node == end):
                     end = None
-
+            
             if(event.type == pygame.KEYDOWN):
-                if(event.key == pygame.K_SPACE and start and end): #make sure that the start and end node is present before starting the algo
+                if(event.key == pygame.K_SPACE and start and end): 
+                #make sure that the start and end node is present before starting the algo
                     for row in grid:
                         for node in row:
                             node.update_neighbours(grid)
                     
                     #lambda is passing a fn. which is fucntion call
                     algo(lambda: draw(win, grid, ROWS, width),grid, start, end)
+                    alert("A* Pathfinder","Do you want to continue?")
                 
                 if(event.key == pygame.K_c):
                     start = None 
                     end  = None
                     grid = make_grid(ROWS, width)
+                
     pygame.quit()
     
 
