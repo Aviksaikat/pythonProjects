@@ -257,6 +257,28 @@ def alert(title, message):
     b2.pack()#the button is placed on the popup
     mainloop()
 
+def alertt(title, message):
+    root = Tk()
+    root.title(title)
+    w = 400     # popup window width
+    h = 250     # popup window height
+    sw = root.winfo_screenwidth()
+    sh = root.winfo_screenheight()
+    x = (sw - w)/2
+    y = (sh - h)/2
+    root.geometry("%dx%d+%d+%d" % (w, h, x, y))
+    m = message
+    m += "\n"
+    w = Label(root, text=m, width=120, height=10)
+    w.pack()
+    #b = Button(root, text="OK", command=root.destroy, width=10)
+    b = Button(root, text="Continue", command=root.destroy, width=10, pady = 5)
+    b2 = Button(root, text="Exit", width=10, pady = 5)
+    b2.bind('<ButtonRelease-1>', done)#done fn. will be called
+    b.pack()
+    b2.pack()#the button is placed on the popup
+    mainloop()
+    
 
 
 #win is the window
@@ -310,8 +332,12 @@ def main(win,width):
                             node.update_neighbours(grid)
                     
                     #lambda is passing a fn. which is fucntion call
-                    algo(lambda: draw(win, grid, ROWS, width),grid, start, end)
-                    alert("A* Pathfinder","Do you want to continue?")
+                    res = algo(lambda: draw(win, grid, ROWS, width),grid, start, end)
+                    if(not res):
+                        #print("no path found")
+                        alertt("A* Pathfinder","No optimal path found")
+                    else:
+                        alert("A* Pathfinder","Do you want to continue?")
                 
                 if(event.key == pygame.K_c):
                     start = None 
@@ -319,6 +345,6 @@ def main(win,width):
                     grid = make_grid(ROWS, width)
                 
     pygame.quit()
-    
+
 
 main(WIN,WIDTH)
