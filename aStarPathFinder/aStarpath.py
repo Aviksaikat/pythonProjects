@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from queue import PriorityQueue
+from sys import exit
 try:
     import pygame
     import sys
@@ -274,7 +275,7 @@ def alertt(title, message):
     #b = Button(root, text="OK", command=root.destroy, width=10)
     b = Button(root, text="Continue", command=root.destroy, width=10, pady = 5)
     b2 = Button(root, text="Exit", width=10, pady = 5)
-    b2.bind('<ButtonRelease-1>', done)#done fn. will be called
+    b2.bind('<ButtonRelease-1>', done)#done fn. will be called  
     b.pack()
     b2.pack()#the button is placed on the popup
     mainloop()
