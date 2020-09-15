@@ -8,6 +8,7 @@ try:
     from tkinter import *
     import os
 except:
+    import requirements  # install packages
     import pygame
     import sys
     import math
