@@ -1,6 +1,7 @@
+#!/usr/bin/python3
 import feedparser
 import webbrowser
-#? run with python 3.6 interpreter
+#? run with python 3.6 
 
 def main():
     print("--Security News Website List--")

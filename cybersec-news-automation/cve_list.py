@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+#? Tested in python 3.7 
 import requests
 import json
 
